@@ -11,39 +11,59 @@ const generateToken = (id) => {
 
 // @route   POST /api/users/register
 // @desc    Register new user
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
   try {
+    console.log('=== REGISTER CALLED ===');
+    console.log('Body:', req.body);
+    
     const { name, email, password } = req.body;
 
-    // Check if user exists
+    // Validate input
+    if (!name || !email || !password) {
+      console.log('Validation failed - missing fields');
+      return res.status(400).json({ message: 'Please provide name, email, and password' });
+    }
+
+    console.log('Checking if user exists...');
     const userExists = await User.findOne({ email });
     if (userExists) {
+      console.log('User already exists');
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create user
+    console.log('Creating user...');
     const user = await User.create({
       name,
       email,
       password
     });
 
-    res.status(201).json({
+    console.log('User created successfully:', user._id);
+    
+    const response = {
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
       token: generateToken(user._id)
-    });
+    };
+    
+    console.log('Sending response...');
+    res.status(201).json(response);
+    console.log('Response sent successfully');
   } catch (error) {
+    console.error('=== ERROR IN REGISTER ===');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ message: error.message });
   }
 };
 
 // @route   POST /api/users/login
 // @desc    Login user
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
   try {
+    console.log('=== LOGIN CALLED ===');
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
@@ -60,13 +80,15 @@ export const login = async (req, res) => {
       res.status(401).json({ message: 'Invalid email or password' });
     }
   } catch (error) {
+    console.error('=== ERROR IN LOGIN ===');
+    console.error('Error:', error.message);
     res.status(500).json({ message: error.message });
   }
 };
 
 // @route   GET /api/users/profile
 // @desc    Get user profile
-export const getProfile = async (req, res) => {
+export const getProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id).select('-password');
     res.json(user);
@@ -77,7 +99,7 @@ export const getProfile = async (req, res) => {
 
 // @route   PUT /api/users/profile
 // @desc    Update user profile
-export const updateProfile = async (req, res) => {
+export const updateProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
 

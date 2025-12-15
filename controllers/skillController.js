@@ -3,7 +3,7 @@ import Skill from '../models/skill.js';
 
 // @route   GET /api/skills
 // @desc    Get all skills
-export const getAllSkills = async (req, res) => {
+export const getAllSkills = async (req, res, next) => {
   try {
     const { category } = req.query;
     let filter = {};
@@ -22,7 +22,7 @@ export const getAllSkills = async (req, res) => {
 
 // @route   GET /api/skills/:id
 // @desc    Get single skill
-export const getSkillById = async (req, res) => {
+export const getSkillById = async (req, res, next) => {
   try {
     const skill = await Skill.findById(req.params.id)
       .populate('author', 'name email');
@@ -39,7 +39,7 @@ export const getSkillById = async (req, res) => {
 
 // @route   POST /api/skills
 // @desc    Create skill
-export const createSkill = async (req, res) => {
+export const createSkill = async (req, res, next) => {
   try {
     const skill = await Skill.create({
       ...req.body,
@@ -54,7 +54,7 @@ export const createSkill = async (req, res) => {
 
 // @route   PUT /api/skills/:id
 // @desc    Update skill
-export const updateSkill = async (req, res) => {
+export const updateSkill = async (req, res, next) => {
   try {
     const skill = await Skill.findById(req.params.id);
     
@@ -80,7 +80,7 @@ export const updateSkill = async (req, res) => {
 
 // @route   DELETE /api/skills/:id
 // @desc    Delete skill
-export const deleteSkill = async (req, res) => {
+export const deleteSkill = async (req, res, next) => {
   try {
     const skill = await Skill.findById(req.params.id);
     

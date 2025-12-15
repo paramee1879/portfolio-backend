@@ -1,9 +1,11 @@
+// ================================================================
 // controllers/contactController.js
+// ================================================================
 import Contact from '../models/Contact.js';
 
 // @route   GET /api/contact
 // @desc    Get all contact messages (admin only)
-export const getAllContacts = async (req, res) => {
+export const getAllContacts = async (req, res, next) => {
   try {
     const { status } = req.query;
     let filter = {};
@@ -19,7 +21,7 @@ export const getAllContacts = async (req, res) => {
 
 // @route   GET /api/contact/:id
 // @desc    Get single contact message
-export const getContactById = async (req, res) => {
+export const getContactById = async (req, res, next) => {
   try {
     const contact = await Contact.findById(req.params.id);
     
@@ -41,7 +43,7 @@ export const getContactById = async (req, res) => {
 
 // @route   POST /api/contact
 // @desc    Create contact message
-export const createContact = async (req, res) => {
+export const createContact = async (req, res, next) => {
   try {
     const { name, email, subject, message, phone, company } = req.body;
 
@@ -65,7 +67,7 @@ export const createContact = async (req, res) => {
 
 // @route   PUT /api/contact/:id
 // @desc    Update contact message status
-export const updateContact = async (req, res) => {
+export const updateContact = async (req, res, next) => {
   try {
     const contact = await Contact.findById(req.params.id);
     
@@ -90,7 +92,7 @@ export const updateContact = async (req, res) => {
 
 // @route   DELETE /api/contact/:id
 // @desc    Delete contact message
-export const deleteContact = async (req, res) => {
+export const deleteContact = async (req, res, next) => {
   try {
     const contact = await Contact.findById(req.params.id);
     

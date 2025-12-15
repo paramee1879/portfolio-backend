@@ -1,9 +1,8 @@
+// ==========================================
 // controllers/blogController.js
-import Blog from '../models/Blog.js';
+// ==========================================
 
-// @route   GET /api/blogs
-// @desc    Get all blogs
-export const getAllBlogs = async (req, res) => {
+export const getAllBlogs = async (req, res, next) => {
   try {
     const { category, tag, published, featured } = req.query;
     let filter = {};
@@ -23,9 +22,7 @@ export const getAllBlogs = async (req, res) => {
   }
 };
 
-// @route   GET /api/blogs/:slug
-// @desc    Get single blog by slug
-export const getBlogBySlug = async (req, res) => {
+export const getBlogBySlug = async (req, res, next) => {
   try {
     const blog = await Blog.findOne({ slug: req.params.slug })
       .populate('author', 'name email avatar bio')
@@ -35,7 +32,6 @@ export const getBlogBySlug = async (req, res) => {
       return res.status(404).json({ message: 'Blog not found' });
     }
     
-    // Increment views
     blog.views += 1;
     await blog.save();
     
@@ -45,9 +41,7 @@ export const getBlogBySlug = async (req, res) => {
   }
 };
 
-// @route   GET /api/blogs/id/:id
-// @desc    Get single blog by ID
-export const getBlogById = async (req, res) => {
+export const getBlogById = async (req, res, next) => {
   try {
     const blog = await Blog.findById(req.params.id)
       .populate('author', 'name email avatar');
@@ -62,9 +56,7 @@ export const getBlogById = async (req, res) => {
   }
 };
 
-// @route   POST /api/blogs
-// @desc    Create blog
-export const createBlog = async (req, res) => {
+export const createBlog = async (req, res, next) => {
   try {
     const blog = await Blog.create({
       ...req.body,
@@ -77,9 +69,7 @@ export const createBlog = async (req, res) => {
   }
 };
 
-// @route   PUT /api/blogs/:id
-// @desc    Update blog
-export const updateBlog = async (req, res) => {
+export const updateBlog = async (req, res, next) => {
   try {
     const blog = await Blog.findById(req.params.id);
     
@@ -103,9 +93,7 @@ export const updateBlog = async (req, res) => {
   }
 };
 
-// @route   DELETE /api/blogs/:id
-// @desc    Delete blog
-export const deleteBlog = async (req, res) => {
+export const deleteBlog = async (req, res, next) => {
   try {
     const blog = await Blog.findById(req.params.id);
     
@@ -124,9 +112,7 @@ export const deleteBlog = async (req, res) => {
   }
 };
 
-// @route   POST /api/blogs/:id/comments
-// @desc    Add comment to blog
-export const addComment = async (req, res) => {
+export const addComment = async (req, res, next) => {
   try {
     const blog = await Blog.findById(req.params.id);
     

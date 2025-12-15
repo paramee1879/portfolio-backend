@@ -1,9 +1,8 @@
+// ==========================================
 // controllers/projectController.js
-import Project from '../models/Project.js';
+// ==========================================
 
-// @route   GET /api/projects
-// @desc    Get all projects
-export const getAllProjects = async (req, res) => {
+export const getAllProjects = async (req, res, next) => {
   try {
     const { category, status, featured } = req.query;
     let filter = {};
@@ -22,9 +21,7 @@ export const getAllProjects = async (req, res) => {
   }
 };
 
-// @route   GET /api/projects/:id
-// @desc    Get single project
-export const getProjectById = async (req, res) => {
+export const getProjectById = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id)
       .populate('author', 'name email avatar');
@@ -39,9 +36,7 @@ export const getProjectById = async (req, res) => {
   }
 };
 
-// @route   POST /api/projects
-// @desc    Create project
-export const createProject = async (req, res) => {
+export const createProject = async (req, res, next) => {
   try {
     const project = await Project.create({
       ...req.body,
@@ -54,9 +49,7 @@ export const createProject = async (req, res) => {
   }
 };
 
-// @route   PUT /api/projects/:id
-// @desc    Update project
-export const updateProject = async (req, res) => {
+export const updateProject = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id);
     
@@ -80,9 +73,7 @@ export const updateProject = async (req, res) => {
   }
 };
 
-// @route   DELETE /api/projects/:id
-// @desc    Delete project
-export const deleteProject = async (req, res) => {
+export const deleteProject = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id);
     
