@@ -2,6 +2,11 @@
 import mongoose from 'mongoose';
 
 const contactSchema = new mongoose.Schema({
+  portfolioOwner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   name: {
     type: String,
     required: true,
@@ -10,8 +15,8 @@ const contactSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    lowercase: true,
-    trim: true
+    trim: true,
+    lowercase: true
   },
   subject: {
     type: String,
@@ -23,10 +28,12 @@ const contactSchema = new mongoose.Schema({
     required: true
   },
   phone: {
-    type: String
+    type: String,
+    default: ''
   },
   company: {
-    type: String
+    type: String,
+    default: ''
   },
   status: {
     type: String,
@@ -38,7 +45,8 @@ const contactSchema = new mongoose.Schema({
     default: false
   },
   replyMessage: {
-    type: String
+    type: String,
+    default: ''
   },
   replyDate: {
     type: Date

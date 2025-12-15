@@ -2,6 +2,11 @@
 import mongoose from 'mongoose';
 
 const blogSchema = new mongoose.Schema({
+  user: {  // ✅ Use 'user' not 'author'
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   title: {
     type: String,
     required: true,
@@ -13,25 +18,24 @@ const blogSchema = new mongoose.Schema({
     unique: true,
     lowercase: true
   },
-  excerpt: {
-    type: String,
-    required: true
-  },
   content: {
     type: String,
     required: true
   },
-  coverImage: {
+  excerpt: {
+    type: String,
+    required: true
+  },
+  category: {
     type: String,
     required: true
   },
   tags: [{
-    type: String,
-    trim: true
+    type: String
   }],
-  category: {
+  coverImage: {
     type: String,
-    required: true
+    default: ''
   },
   published: {
     type: Boolean,
@@ -46,12 +50,8 @@ const blogSchema = new mongoose.Schema({
     default: 0
   },
   readTime: {
-    type: Number
-  },
-  author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    type: Number,
+    default: 0
   },
   comments: [{
     user: {
@@ -68,17 +68,6 @@ const blogSchema = new mongoose.Schema({
   }]
 }, {
   timestamps: true
-});
-
-// Auto-generate slug from title
-blogSchema.pre('save', function(next) {
-  if (this.isModified('title') && !this.slug) {
-    this.slug = this.title
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-');
-  }
-  next();
 });
 
 export default mongoose.model('Blog', blogSchema);

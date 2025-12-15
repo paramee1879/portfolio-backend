@@ -4,6 +4,10 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import userRoutes from './routes/userRoutes.js';
+import blogRoutes from './routes/blogRoutes.js';        // ← Add this
+import projectRoutes from './routes/projectRoutes.js';  // ← Add this
+import skillRoutes from './routes/skillRoutes.js';      // ← Add this
+import contactRoutes from './routes/contactRoutes.js';  // ← Add this
 
 dotenv.config();
 
@@ -16,6 +20,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Register routes BEFORE database connection
 app.use('/api/users', userRoutes);
+app.use('/api/blogs', blogRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/skills', skillRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Error handling middleware - must be AFTER routes
 app.use((err, req, res, next) => {

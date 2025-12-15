@@ -1,17 +1,35 @@
+// ================================================================
 // controllers/skillController.js
-import Skill from '../models/skill.js';
+// ================================================================
+
+import Skill from '../models/Skill.js';
 
 // @route   GET /api/skills
-// @desc    Get all skills
+// @desc    Get all skills (PUBLIC)
 export const getAllSkills = async (req, res, next) => {
   try {
-    const { category } = req.query;
+    const { category, user } = req.query;
     let filter = {};
 
     if (category) filter.category = category;
+    if (user) filter.user = user; // Filter by specific user ID
 
     const skills = await Skill.find(filter)
-      .populate('author', 'name')
+      .populate('user', 'name email avatar')
+      .sort('order');
+    
+    res.json(skills);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @route   GET /api/skills/my
+// @desc    Get MY skills only (PROTECTED)
+export const getMySkills = async (req, res, next) => {
+  try {
+    const skills = await Skill.find({ user: req.user._id })
+      .populate('user', 'name email avatar')
       .sort('order');
     
     res.json(skills);
@@ -21,11 +39,11 @@ export const getAllSkills = async (req, res, next) => {
 };
 
 // @route   GET /api/skills/:id
-// @desc    Get single skill
+// @desc    Get single skill (PUBLIC)
 export const getSkillById = async (req, res, next) => {
   try {
     const skill = await Skill.findById(req.params.id)
-      .populate('author', 'name email');
+      .populate('user', 'name email avatar');
     
     if (!skill) {
       return res.status(404).json({ message: 'Skill not found' });
@@ -38,12 +56,12 @@ export const getSkillById = async (req, res, next) => {
 };
 
 // @route   POST /api/skills
-// @desc    Create skill
+// @desc    Create skill (PROTECTED)
 export const createSkill = async (req, res, next) => {
   try {
     const skill = await Skill.create({
       ...req.body,
-      author: req.user._id
+      user: req.user._id
     });
     
     res.status(201).json(skill);
@@ -53,7 +71,7 @@ export const createSkill = async (req, res, next) => {
 };
 
 // @route   PUT /api/skills/:id
-// @desc    Update skill
+// @desc    Update skill (PROTECTED - owner only)
 export const updateSkill = async (req, res, next) => {
   try {
     const skill = await Skill.findById(req.params.id);
@@ -62,15 +80,16 @@ export const updateSkill = async (req, res, next) => {
       return res.status(404).json({ message: 'Skill not found' });
     }
     
-    if (skill.author.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Not authorized' });
+    // Check if skill belongs to user
+    if (skill.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to update this skill' });
     }
     
     const updatedSkill = await Skill.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true }
-    );
+    ).populate('user', 'name email avatar');
     
     res.json(updatedSkill);
   } catch (error) {
@@ -79,7 +98,7 @@ export const updateSkill = async (req, res, next) => {
 };
 
 // @route   DELETE /api/skills/:id
-// @desc    Delete skill
+// @desc    Delete skill (PROTECTED - owner only)
 export const deleteSkill = async (req, res, next) => {
   try {
     const skill = await Skill.findById(req.params.id);
@@ -88,8 +107,9 @@ export const deleteSkill = async (req, res, next) => {
       return res.status(404).json({ message: 'Skill not found' });
     }
     
-    if (skill.author.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Not authorized' });
+    // Check if skill belongs to user
+    if (skill.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to delete this skill' });
     }
     
     await skill.deleteOne();

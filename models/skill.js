@@ -2,6 +2,11 @@
 import mongoose from 'mongoose';
 
 const skillSchema = new mongoose.Schema({
+  user: {  // ✅ Use 'user' not 'author'
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   name: {
     type: String,
     required: true,
@@ -10,36 +15,29 @@ const skillSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['frontend', 'backend', 'database', 'devops', 'tools', 'other']
+    enum: ['frontend', 'backend', 'database', 'tools', 'other']
   },
-  proficiency: {
+  level: {
     type: Number,
     required: true,
     min: 0,
     max: 100
   },
   icon: {
-    type: String
-  },
-  color: {
     type: String,
-    default: '#3b82f6'
+    default: ''
+  },
+  description: {
+    type: String,
+    default: ''
   },
   yearsOfExperience: {
     type: Number,
-    min: 0
-  },
-  description: {
-    type: String
+    default: 0
   },
   order: {
     type: Number,
     default: 0
-  },
-  author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
   }
 }, {
   timestamps: true

@@ -2,6 +2,11 @@
 import mongoose from 'mongoose';
 
 const projectSchema = new mongoose.Schema({
+  user: {  // ✅ Changed from 'author' to 'user'
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   title: {
     type: String,
     required: true,
@@ -55,11 +60,6 @@ const projectSchema = new mongoose.Schema({
   },
   role: {
     type: String
-  },
-  author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
   }
 }, {
   timestamps: true
